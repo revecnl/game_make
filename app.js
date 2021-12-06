@@ -8,7 +8,7 @@ canvas.height = window.innerHeight - 100;
 // 오브젝트 생성1 - 나루니
 var dino = {
     x : 50,
-    y : 200,
+    y : 400,
     width : 50,
     height : 50,
 
@@ -25,7 +25,7 @@ var dino = {
 class Cactus{
     constructor(){
         this.x = 400;
-        this.y = 200;
+        this.y = 400;
         this.width = 50;
         this.height = 50;
     }
@@ -38,9 +38,12 @@ draw(){
 // 타이머
 var timer = 0;
 var enemy = [];
+var jumpingtimer = 0;
+var animation;
+
 
 function EachFrame(){
-    requestAnimationFrame(EachFrame);
+    animation = requestAnimationFrame(EachFrame);//프레임마다 실행하게 함//
     timer++;
 
     // 캔버스 리셋
@@ -54,13 +57,63 @@ function EachFrame(){
         enemy.push(cactus)
     }
 
-    enemy.forEach((a)=>{
+
+
+    enemy.forEach((a, i, o)=>{
+    //x좌표가 0미만이면 제거
+    if (a.x < 0){
+        o.splice(i, 1)
+    }
     a.x--;
+    //좌표계산 충돌
+    crash(dino, a);
+
     a.draw();
     })
 
-    // 나루니
+    //스페이스 누르면 점프
+
+if (jumping == true){
+    dino.y-=10;
+    jumpingtimer++;
+}
+
+if(jumping == false){
+    if(dino.y < 400){
+    dino.y+=10;}
+}
+
+if (jumpingtimer > 30){
+    jumping = false;
+    jumpingtimer = 0;
+}
+// 나루니
     dino.draw()
 }
 
 EachFrame();
+
+//충돌확인
+function crash(dino, cactus){
+    var Xaxisdifference = cactus.x - (dino.x + dino.width);
+    var Yaxisdifference = cactus.y - (dino.y + dino.height);
+    if(Xaxisdifference < 0 && Yaxisdifference < 0){
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+        cancelAnimationFrame(animation)
+    }
+}
+
+
+
+//스위치
+var jumping = false;
+
+document.addEventListener('keydown', function(e){
+    if (e.code === 'Space'){
+        jumping = true;
+    }
+})
+
+//이미지 덧씌우기
+var img1 = new Image();
+imag1.src = '';
